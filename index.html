@@ -187,6 +187,8 @@
             <div class="item" id="res_mendo" onclick="selectReview('res_mendo')"><img src="rez7.png" alt="Rezension"></div>
         </div>
 
+        <div id="feedback-msg" style="height: 30px; margin-bottom: 10px; font-weight: bold; text-align: center; border-radius: 8px; transition: 0.3s; display: flex; align-items: center; justify-content: center;"></div>
+
         <span class="section-title">Die Lokale</span>
         <div id="locations-list">
             <div class="target-box" id="goal_tutti" onclick="matchLocation('tutti')"><p>Cafe Tutti Frutti</p></div>
@@ -202,63 +204,71 @@
     <footer>Erstellt für die legendäre Beisltour 2026</footer>
 
     <script>
-        let selectedReviewId = null;
+    let selectedReviewId = null;
 
-        // Rezensionen beim Laden mischen (Shuffle)
-        window.addEventListener('DOMContentLoaded', () => {
-            const pool = document.getElementById('reviews-pool');
-            for (let i = pool.children.length; i >= 0; i--) {
-                pool.appendChild(pool.children[Math.random() * i | 0]);
-            }
-        });
-
-        function selectReview(id) {
-            // Falls schon eins gewählt war, Markierung entfernen
-            if (selectedReviewId) {
-                const old = document.getElementById(selectedReviewId);
-                if(old) old.classList.remove('selected');
-            }
-            // Neues wählen
-            selectedReviewId = id;
-            document.getElementById(id).classList.add('selected');
+    window.addEventListener('DOMContentLoaded', () => {
+        const pool = document.getElementById('reviews-pool');
+        for (let i = pool.children.length; i >= 0; i--) {
+            pool.appendChild(pool.children[Math.random() * i | 0]);
         }
+    });
 
-        function matchLocation(locId) {
-            if (!selectedReviewId) {
-                alert("Wähle zuerst oben eine Rezension aus!");
-                return;
-            }
+    function showFeedback(text, isError) {
+        const msgDiv = document.getElementById('feedback-msg');
+        msgDiv.innerText = text;
+        msgDiv.style.backgroundColor = isError ? "rgba(255, 68, 68, 0.2)" : "rgba(40, 167, 69, 0.2)";
+        msgDiv.style.color = isError ? "#ff4444" : "#28a745";
+        
+        // Nachricht nach 3 Sekunden ausblenden
+        setTimeout(() => {
+            msgDiv.innerText = "";
+            msgDiv.style.backgroundColor = "transparent";
+        }, 3000);
+    }
+
+    function selectReview(id) {
+        if (selectedReviewId) {
+            const old = document.getElementById(selectedReviewId);
+            if(old) old.classList.remove('selected');
+        }
+        selectedReviewId = id;
+        document.getElementById(id).classList.add('selected');
+    }
+
+    function matchLocation(locId) {
+        if (!selectedReviewId) {
+            showFeedback("Wähle zuerst eine Rezension!", true);
+            return;
+        }
+        
+        const reviewKey = selectedReviewId.replace('res_', '');
+        
+        if (reviewKey === locId) {
+            const reviewEl = document.getElementById(selectedReviewId);
+            reviewEl.classList.add('hidden');
             
-            const reviewKey = selectedReviewId.replace('res_', '');
+            const targetEl = document.getElementById('goal_' + locId);
+            targetEl.classList.add('solved');
+            targetEl.innerHTML = "<p>✅ " + targetEl.innerText.replace('✅ ', '') + "</p>";
             
-            if (reviewKey === locId) {
-                // Richtig!
-                const reviewEl = document.getElementById(selectedReviewId);
-                reviewEl.classList.add('hidden');
-                
-                const targetEl = document.getElementById('goal_' + locId);
-                targetEl.classList.add('solved');
-                targetEl.innerHTML = "<p>✅ " + targetEl.innerText.replace('✅ ', '') + "</p>";
-                
-                selectedReviewId = null;
-                checkWin();
-            } else {
-                // Falsch
-                alert("Oje! Das passt nicht zusammen. Probier ein anderes Lokal.");
-                // Auswahl zur Sicherheit aufheben
-                document.getElementById(selectedReviewId).classList.remove('selected');
-                selectedReviewId = null;
-            }
+            showFeedback("Richtig! Prost! 🍻", false);
+            selectedReviewId = null;
+            checkWin();
+        } else {
+            showFeedback("Oje! Das passt nicht zusammen. ❌", true);
+            document.getElementById(selectedReviewId).classList.remove('selected');
+            selectedReviewId = null;
         }
+    }
 
-        function checkWin() {
-            const solved = document.querySelectorAll('.target-box.solved').length;
-            if (solved === 7) {
-                setTimeout(() => {
-                    alert("PROST! 🍻\nDu hast alle Rezensionen richtig zugeordnet!\nJetzt seid ihr bereit für die Tour.");
-                }, 500);
-            }
+    function checkWin() {
+        const solved = document.querySelectorAll('.target-box.solved').length;
+        if (solved === 7) {
+            setTimeout(() => {
+                showFeedback("GEWONNEN! Ihr seid Beisl-Profis! 🎉", false);
+            }, 500);
         }
-    </script>
+    }
+</script>
 </body>
 </html>

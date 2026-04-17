@@ -5,49 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beisltour Quiz</title>
     <style>
-        :root { --primary: #007bff; --success: #28a745; --bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        h1 { font-size: 1.5rem; text-align: center; color: #333; }
+        :root { 
+            --primary: #d4af37; /* Gold */
+            --dark: #1a1a1a; 
+            --success: #28a745; 
+            --bg: #2c3e50; 
+        }
+        body { 
+            font-family: 'Helvetica Neue', Arial, sans-serif; 
+            background: var(--bg); 
+            color: white;
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 20px; 
+        }
+        h1 { font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin-bottom: 5px; }
         
-        .container { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 500px; }
+        .route-link {
+            background: #4285F4;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .container { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 450px; }
         
-        /* Rezensionen */
-        .section-title { font-weight: bold; margin-bottom: 10px; display: block; }
-        .item { background: #fff; border: 2px solid #ddd; border-radius: 10px; padding: 5px; cursor: pointer; transition: all 0.2s; }
+        .section-title { font-weight: bold; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Karten Design */
+        .item { 
+            background: #fff; 
+            border-radius: 12px; 
+            padding: 8px; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
         .item img { width: 100%; border-radius: 8px; display: block; }
-        .item.selected { border-color: var(--primary); box-shadow: 0 0 10px rgba(0,123,255,0.5); transform: scale(1.02); }
+        .item.selected { 
+            outline: 4px solid var(--primary);
+            transform: translateY(-5px);
+        }
         .item.hidden { display: none; }
 
-        /* Lokale / Zielboxen */
-        .target-box { background: #fff; border: 2px solid #ccc; border-radius: 10px; padding: 15px; text-align: center; transition: all 0.2s; }
-        .target-box.active-target { border-color: var(--primary); background: #eef6ff; }
-        .target-box.solved { border-color: var(--success); background: #d4edda; }
-        .target-box p { margin: 0; font-weight: bold; }
+        /* Zielboxen */
+        .target-box { 
+            background: rgba(255,255,255,0.1); 
+            border: 2px dashed rgba(255,255,255,0.3); 
+            border-radius: 12px; 
+            padding: 15px; 
+            text-align: center; 
+            transition: 0.3s;
+        }
+        .target-box.solved { 
+            background: var(--success); 
+            border-style: solid;
+            border-color: #fff;
+        }
+        .target-box p { margin: 0; font-weight: bold; color: white; }
         
-        .status-msg { margin-top: 10px; font-size: 0.9rem; color: #666; }
+        .status-msg { margin-bottom: 15px; font-style: italic; opacity: 0.8; }
     </style>
 </head>
 <body>
 
-    <h1>Beisltour: Wer gehört wohin?</h1>
-    <p class="status-msg">1. Rezension antippen -> 2. Lokal antippen</p>
+    <h1>Beisltour Quiz</h1>
+    <a href="https://www.google.com/maps/dir/Cafe+Tutti+Frutti,+Fernkorngasse+45,+Wien,+%C3%96sterreich/Cafe+Susi+und+Strolch(i),+Quellenstra%C3%9Fe+134%2F136,+Wien,+%C3%96sterreich/Guggi%E2%80%98s+Beis%E2%80%98l,+Gussriegelstra%C3%9Fe+5,+Wien,+%C3%96sterreich/Caf%C3%A9+Matz,+Reinprechtsdorfer+Stra%C3%9Fe+1A,+Wien,+%C3%96sterreich/Caf%C3%A9+Natural+Winebar+Espresso.,+Burggasse+57,+Wien,+%C3%96sterreich/Mitzi's+Treff,+Embelgasse+41,+Wien,+%C3%96sterreich/Mendocino+-+Dein+Lokal+in+Wien,+Embelgasse+60,+Wien,+%C3%96sterreich/data=!4m44!4m43!1m5!1m1!19sChIJ_asPjRypbUcRsiJ70qdovEM!2m2!1d16.363434299999998!2d48.1741441!1m5!1m1!19sChIJcYz1LQupbUcRVnUVNucLfRI!2m2!1d16.363270699999998!2d48.1764678!1m5!1m1!19sChIJoQEkUsupbUcRS6SQRpIqGZo!2m2!1d16.359775799999998!2d48.1758066!1m5!1m1!19sChIJWeAE-S2obUcRGJoPRra8tDw!2m2!1d16.3578114!2d48.1814676!1m5!1m1!19sChIJUds9jpIHbUcRtVu1iLdi55I!2m2!1d16.3500112!2d48.204072599999996!1m5!1m1!19sChIJTX2Thi-obUcRqYSIcUQgnZM!2m2!1d16.3506555!2d48.1849068!1m5!1m1!19sChIJEaPYwCWobUcR-Jwsl8Qeq1g!2m2!1d16.3494124!2d48.1869623!3e0" class="route-link" target="_blank">🗺️ Ganze Route auf Maps öffnen</a>
+    
+    <p class="status-msg">Tippe eine Rezension an, dann das Lokal!</p>
 
     <div class="container">
-        <span class="section-title">Rezensionen</span>
+        <span class="section-title">Die Bewertungen</span>
         <div id="reviews-pool">
-    <div class="item" id="res_tutti" onclick="selectReview('res_tutti')"><img src="rez1.png" alt="Rezension 1"></div>
-    <div class="item" id="res_susi" onclick="selectReview('res_susi')"><img src="SusiUndStrolch.png" alt="Rezension 2"></div>
-    <div class="item" id="res_gugis" onclick="selectReview('res_gugis')"><img src="rez3.png" alt="Rezension 3"></div>
-    <div class="item" id="res_matz" onclick="selectReview('res_matz')"><img src="rez4.png" alt="Rezension 4"></div>
-    <div class="item" id="res_espresso" onclick="selectReview('res_espresso')"><img src="rez5.png" alt="Rezension 5"></div>
-    <div class="item" id="res_mitzis" onclick="selectReview('res_mitzis')"><img src="rez6.png" alt="Rezension 6"></div>
-    <div class="item" id="res_mendo" onclick="selectReview('res_mendo')"><img src="rez7.png" alt="Rezension 7"></div>
-</div>
+            <div class="item" id="res_tutti" onclick="selectReview('res_tutti')"><img src="rez1.png" alt="Rezension 1"></div>
+            <div class="item" id="res_susi" onclick="selectReview('res_susi')"><img src="SusiUndStrolch.png" alt="Rezension 2"></div>
+            <div class="item" id="res_gugis" onclick="selectReview('res_gugis')"><img src="rez3.png" alt="Rezension 3"></div>
+            <div class="item" id="res_matz" onclick="selectReview('res_matz')"><img src="rez4.png" alt="Rezension 4"></div>
+            <div class="item" id="res_espresso" onclick="selectReview('res_espresso')"><img src="rez5.png" alt="Rezension 5"></div>
+            <div class="item" id="res_mitzis" onclick="selectReview('res_mitzis')"><img src="rez6.png" alt="Rezension 6"></div>
+            <div class="item" id="res_mendo" onclick="selectReview('res_mendo')"><img src="rez7.png" alt="Rezension 7"></div>
+        </div>
 
-        <span class="section-title">Lokale</span>
-        <div id="locations-list">
+        <span class="section-title">Die Lokale</span>
+        <div id="locations-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
             <div class="target-box" id="goal_tutti" onclick="matchLocation('tutti')"><p>Cafe Tutti Frutti</p></div>
-            <div class="target-box" id="goal_susi" onclick="matchLocation('susi')"><p>Cafe Susi und Strolch</p></div>
+            <div class="target-box" id="goal_susi" onclick="matchLocation('susi')"><p>Susi und Strolch</p></div>
             <div class="target-box" id="goal_gugis" onclick="matchLocation('gugis')"><p>Gugis Beisl</p></div>
             <div class="target-box" id="goal_matz" onclick="matchLocation('matz')"><p>Cafe Matz</p></div>
             <div class="target-box" id="goal_espresso" onclick="matchLocation('espresso')"><p>Café Espresso</p></div>
@@ -59,41 +108,41 @@
     <script>
         let selectedReviewId = null;
 
+        // Rezensionen beim Laden mischen
+        window.addEventListener('DOMContentLoaded', () => {
+            const pool = document.getElementById('reviews-pool');
+            for (let i = pool.children.length; i >= 0; i--) {
+                pool.appendChild(pool.children[Math.random() * i | 0]);
+            }
+        });
+
         function selectReview(id) {
-            // Alte Auswahl aufheben
             if (selectedReviewId) {
                 document.getElementById(selectedReviewId).classList.remove('selected');
             }
-            // Neue Auswahl setzen
             selectedReviewId = id;
             document.getElementById(id).classList.add('selected');
         }
 
         function matchLocation(locId) {
-            if (!selectedReviewId) {
-                alert("Wähle zuerst eine Rezension aus!");
-                return;
-            }
-
+            if (!selectedReviewId) return;
             const reviewKey = selectedReviewId.replace('res_', '');
             
             if (reviewKey === locId) {
-                // Erfolg
                 document.getElementById(selectedReviewId).classList.add('hidden');
                 const target = document.getElementById('goal_' + locId);
                 target.classList.add('solved');
-                target.innerHTML += " ✅";
+                target.innerHTML = "<p>✅ " + target.innerText + "</p>";
                 selectedReviewId = null;
                 checkWin();
             } else {
-                alert("Nee, das ist ein anderes Beisl!");
+                alert("Falsches Beisl! Probier's nochmal.");
             }
         }
 
         function checkWin() {
-            const hiddenCount = document.querySelectorAll('.item.hidden').length;
-            if (hiddenCount === 7) {
-                alert("Prost! Du hast alle Beisls erkannt!");
+            if (document.querySelectorAll('.item.hidden').length === 7) {
+                alert("Wahnsinn! Du bist ein echter Beisl-Experte. Prost!");
             }
         }
     </script>

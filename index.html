@@ -5,68 +5,95 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beisltour Quiz</title>
     <style>
-        body { font-family: sans-serif; background: #f0f2f5; display: flex; flex-direction: column; align-items: center; }
-        .container { display: flex; gap: 20px; padding: 20px; flex-wrap: wrap; justify-content: center; }
-        .column { width: 380px; background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        /* Die Rezensions-Bilder */
-        .item { cursor: grab; margin-bottom: 15px; transition: transform 0.2s; }
-        .item img { width: 100%; border-radius: 8px; border: 1px solid #ddd; }
-        .item:active { cursor: grabbing; }
-        /* Die Ziel-Boxen */
-        .target-box { background: #fff; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 15px; padding: 10px; }
-        .target-box p { font-weight: bold; margin-top: 0; color: #333; }
-        .dropzone { min-height: 100px; border: 2px dashed #bbb; border-radius: 6px; display: flex; align-items: center; justify-content: center; background: #fafafa; }
-        .correct { background-color: #d4edda !important; border-color: #28a745 !important; }
+        :root { --primary: #007bff; --success: #28a745; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        h1 { font-size: 1.5rem; text-align: center; color: #333; }
+        
+        .container { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 500px; }
+        
+        /* Rezensionen */
+        .section-title { font-weight: bold; margin-bottom: 10px; display: block; }
+        .item { background: #fff; border: 2px solid #ddd; border-radius: 10px; padding: 5px; cursor: pointer; transition: all 0.2s; }
+        .item img { width: 100%; border-radius: 8px; display: block; }
+        .item.selected { border-color: var(--primary); box-shadow: 0 0 10px rgba(0,123,255,0.5); transform: scale(1.02); }
+        .item.hidden { display: none; }
+
+        /* Lokale / Zielboxen */
+        .target-box { background: #fff; border: 2px solid #ccc; border-radius: 10px; padding: 15px; text-align: center; transition: all 0.2s; }
+        .target-box.active-target { border-color: var(--primary); background: #eef6ff; }
+        .target-box.solved { border-color: var(--success); background: #d4edda; }
+        .target-box p { margin: 0; font-weight: bold; }
+        
+        .status-msg { margin-top: 10px; font-size: 0.9rem; color: #666; }
     </style>
 </head>
 <body>
 
     <h1>Beisltour: Wer gehört wohin?</h1>
+    <p class="status-msg">1. Rezension antippen -> 2. Lokal antippen</p>
 
     <div class="container">
-        <div class="column">
-            <h2>Rezensionen</h2>
-            <div class="item" draggable="true" id="res_tutti" ondragstart="drag(event)">
-                <img src="rez1.jpg" alt="Rezension 1">
-            </div>
-            <div class="item" draggable="true" id="res_susi" ondragstart="drag(event)">
-                <img src="rez2.jpg" alt="Rezension 2">
-            </div>
-            </div>
+        <span class="section-title">Rezensionen</span>
+        <div id="reviews-pool">
+            <div class="item" id="res_tutti" onclick="selectReview('res_tutti')"><img src="rez1.jpg" alt="Rezension"></div>
+            <div class="item" id="res_susi" onclick="selectReview('res_susi')"><img src="rez2.jpg" alt="Rezension"></div>
+            <div class="item" id="res_gugis" onclick="selectReview('res_gugis')"><img src="rez3.jpg" alt="Rezension"></div>
+            <div class="item" id="res_matz" onclick="selectReview('res_matz')"><img src="rez4.jpg" alt="Rezension"></div>
+            <div class="item" id="res_espresso" onclick="selectReview('res_espresso')"><img src="rez5.jpg" alt="Rezension"></div>
+            <div class="item" id="res_mitzis" onclick="selectReview('res_mitzis')"><img src="rez6.jpg" alt="Rezension"></div>
+            <div class="item" id="res_mendo" onclick="selectReview('res_mendo')"><img src="rez7.jpg" alt="Rezension"></div>
+        </div>
 
-        <div class="column">
-            <h2>Lokale</h2>
-            <div class="target-box">
-                <p>Cafe Tutti Frutti</p>
-                <div class="dropzone" id="goal_tutti" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            </div>
-            <div class="target-box">
-                <p>Cafe Susi und Strolch</p>
-                <div class="dropzone" id="goal_susi" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            </div>
-            </div>
+        <span class="section-title">Lokale</span>
+        <div id="locations-list">
+            <div class="target-box" id="goal_tutti" onclick="matchLocation('tutti')"><p>Cafe Tutti Frutti</p></div>
+            <div class="target-box" id="goal_susi" onclick="matchLocation('susi')"><p>Cafe Susi und Strolch</p></div>
+            <div class="target-box" id="goal_gugis" onclick="matchLocation('gugis')"><p>Gugis Beisl</p></div>
+            <div class="target-box" id="goal_matz" onclick="matchLocation('matz')"><p>Cafe Matz</p></div>
+            <div class="target-box" id="goal_espresso" onclick="matchLocation('espresso')"><p>Café Espresso</p></div>
+            <div class="target-box" id="goal_mitzis" onclick="matchLocation('mitzis')"><p>Mitzis Treff</p></div>
+            <div class="target-box" id="goal_mendo" onclick="matchLocation('mendo')"><p>Mendocino</p></div>
+        </div>
     </div>
 
     <script>
-        function allowDrop(ev) { ev.preventDefault(); }
-        function drag(ev) { ev.dataTransfer.setData("text", ev.target.closest('.item').id); }
-        function drop(ev) {
-            ev.preventDefault();
-            var data = ev.dataTransfer.getData("text");
-            var draggedElement = document.getElementById(data);
-            var dropzone = ev.target.closest('.dropzone');
-            
-            if (!dropzone) return;
+        let selectedReviewId = null;
 
-            var targetId = dropzone.id.replace('goal_', '');
-            var sourceId = data.replace('res_', '');
+        function selectReview(id) {
+            // Alte Auswahl aufheben
+            if (selectedReviewId) {
+                document.getElementById(selectedReviewId).classList.remove('selected');
+            }
+            // Neue Auswahl setzen
+            selectedReviewId = id;
+            document.getElementById(id).classList.add('selected');
+        }
+
+        function matchLocation(locId) {
+            if (!selectedReviewId) {
+                alert("Wähle zuerst eine Rezension aus!");
+                return;
+            }
+
+            const reviewKey = selectedReviewId.replace('res_', '');
             
-            if (sourceId === targetId) {
-                dropzone.appendChild(draggedElement);
-                dropzone.classList.add("correct");
-                draggedElement.setAttribute("draggable", "false");
+            if (reviewKey === locId) {
+                // Erfolg
+                document.getElementById(selectedReviewId).classList.add('hidden');
+                const target = document.getElementById('goal_' + locId);
+                target.classList.add('solved');
+                target.innerHTML += " ✅";
+                selectedReviewId = null;
+                checkWin();
             } else {
-                alert("Falsch zugeordnet!");
+                alert("Nee, das ist ein anderes Beisl!");
+            }
+        }
+
+        function checkWin() {
+            const hiddenCount = document.querySelectorAll('.item.hidden').length;
+            if (hiddenCount === 7) {
+                alert("Prost! Du hast alle Beisls erkannt!");
             }
         }
     </script>

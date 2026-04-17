@@ -6,13 +6,15 @@
     <title>Beisltour Quiz</title>
     <style>
         :root { 
-            --primary: #d4af37; /* Gold */
+            --primary: #d4af37; /* Gold-Ton für Beisl-Feeling */
             --dark: #1a1a1a; 
             --success: #28a745; 
             --bg: #2c3e50; 
+            --card-bg: #ffffff;
         }
+
         body { 
-            font-family: 'Helvetica Neue', Arial, sans-serif; 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
             background: var(--bg); 
             color: white;
             margin: 0; 
@@ -20,81 +22,171 @@
             flex-direction: column; 
             align-items: center; 
             padding: 20px; 
+            min-height: 100vh;
         }
-        h1 { font-size: 1.8rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin-bottom: 5px; }
-        
+
+        h1 { 
+            font-size: 1.8rem; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5); 
+            margin-bottom: 10px; 
+            text-align: center;
+        }
+
+        /* Route Sektion */
+        .route-container {
+            width: 100%;
+            max-width: 450px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
         .route-link {
             background: #4285F4;
             color: white;
             text-decoration: none;
-            padding: 10px 20px;
+            padding: 12px 20px;
             border-radius: 50px;
             font-weight: bold;
-            margin-bottom: 20px;
             display: inline-block;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.2s, background 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            margin-top: 10px;
         }
 
-        .container { display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 450px; }
+        .route-link:hover {
+            transform: scale(1.05);
+            background: #357ae8;
+        }
+
+        .container { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px; 
+            width: 100%; 
+            max-width: 450px; 
+        }
         
-        .section-title { font-weight: bold; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
-
-        /* Karten Design */
-        .item { 
-            background: #fff; 
-            border-radius: 12px; 
-            padding: 8px; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        .section-title { 
+            font-weight: bold; 
+            color: var(--primary); 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            font-size: 0.9rem;
+            margin-bottom: 5px;
         }
-        .item img { width: 100%; border-radius: 8px; display: block; }
+
+        /* Rezensionen Karten */
+        #reviews-pool {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .item { 
+            background: var(--card-bg); 
+            border-radius: 12px; 
+            padding: 6px; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .item img { 
+            width: 100%; 
+            border-radius: 8px; 
+            display: block; 
+        }
+
         .item.selected { 
             outline: 4px solid var(--primary);
-            transform: translateY(-5px);
+            transform: scale(1.03);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
         }
-        .item.hidden { display: none; }
 
-        /* Zielboxen */
+        .item.hidden { 
+            display: none; 
+        }
+
+        /* Lokale Gitter */
+        #locations-list { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 10px; 
+        }
+
         .target-box { 
-            background: rgba(255,255,255,0.1); 
-            border: 2px dashed rgba(255,255,255,0.3); 
+            background: rgba(255,255,255,0.05); 
+            border: 2px dashed rgba(255,255,255,0.2); 
             border-radius: 12px; 
             padding: 15px; 
             text-align: center; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60px;
             transition: 0.3s;
+            cursor: pointer;
         }
+
         .target-box.solved { 
             background: var(--success); 
             border-style: solid;
             border-color: #fff;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
         }
-        .target-box p { margin: 0; font-weight: bold; color: white; }
+
+        .target-box p { 
+            margin: 0; 
+            font-weight: bold; 
+            color: white; 
+            font-size: 0.9rem;
+        }
         
-        .status-msg { margin-bottom: 15px; font-style: italic; opacity: 0.8; }
+        .status-msg { 
+            margin-bottom: 10px; 
+            font-style: italic; 
+            opacity: 0.8; 
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        footer {
+            margin-top: 40px;
+            font-size: 0.7rem;
+            opacity: 0.5;
+        }
     </style>
 </head>
 <body>
 
-    <h1>Beisltour Quiz</h1>
-    <a href="https://www.google.com/maps/dir/Cafe+Tutti+Frutti,+Fernkorngasse+45,+Wien,+%C3%96sterreich/Cafe+Susi+und+Strolch(i),+Quellenstra%C3%9Fe+134%2F136,+Wien,+%C3%96sterreich/Guggi%E2%80%98s+Beis%E2%80%98l,+Gussriegelstra%C3%9Fe+5,+Wien,+%C3%96sterreich/Caf%C3%A9+Matz,+Reinprechtsdorfer+Stra%C3%9Fe+1A,+Wien,+%C3%96sterreich/Caf%C3%A9+Natural+Winebar+Espresso.,+Burggasse+57,+Wien,+%C3%96sterreich/Mitzi's+Treff,+Embelgasse+41,+Wien,+%C3%96sterreich/Mendocino+-+Dein+Lokal+in+Wien,+Embelgasse+60,+Wien,+%C3%96sterreich/data=!4m44!4m43!1m5!1m1!19sChIJ_asPjRypbUcRsiJ70qdovEM!2m2!1d16.363434299999998!2d48.1741441!1m5!1m1!19sChIJcYz1LQupbUcRVnUVNucLfRI!2m2!1d16.363270699999998!2d48.1764678!1m5!1m1!19sChIJoQEkUsupbUcRS6SQRpIqGZo!2m2!1d16.359775799999998!2d48.1758066!1m5!1m1!19sChIJWeAE-S2obUcRGJoPRra8tDw!2m2!1d16.3578114!2d48.1814676!1m5!1m1!19sChIJUds9jpIHbUcRtVu1iLdi55I!2m2!1d16.3500112!2d48.204072599999996!1m5!1m1!19sChIJTX2Thi-obUcRqYSIcUQgnZM!2m2!1d16.3506555!2d48.1849068!1m5!1m1!19sChIJEaPYwCWobUcR-Jwsl8Qeq1g!2m2!1d16.3494124!2d48.1869623!3e0" class="route-link" target="_blank">🗺️ Ganze Route auf Maps öffnen</a>
+    <h1>🍻 Beisltour Quiz</h1>
     
-    <p class="status-msg">Tippe eine Rezension an, dann das Lokal!</p>
+    <div class="route-container">
+        <div style="font-size: 0.8rem; margin-bottom: 8px;">UNSERE ROUTE: Favoriten ➔ Meidling</div>
+        <a href="https://www.google.com/maps/dir/Cafe+Tutti+Frutti,+Fernkorngasse+45,+1100+Wien/Cafe+Susi+und+Strolch/Gugis+Beisl/Cafe+Matz/Caf%C3%A9+Espresso/Mitzis+Treff/Mendocino,+Embelgasse+60,+1120+Wien" class="route-link" target="_blank">📍 Route auf Maps öffnen</a>
+    </div>
+    
+    <p class="status-msg">1. Rezension wählen &nbsp;➔&nbsp; 2. Lokal wählen</p>
 
     <div class="container">
-        <span class="section-title">Die Bewertungen</span>
+        <span class="section-title">Wer hat das geschrieben?</span>
         <div id="reviews-pool">
-            <div class="item" id="res_tutti" onclick="selectReview('res_tutti')"><img src="rez1.png" alt="Rezension 1"></div>
-            <div class="item" id="res_susi" onclick="selectReview('res_susi')"><img src="SusiUndStrolch.png" alt="Rezension 2"></div>
-            <div class="item" id="res_gugis" onclick="selectReview('res_gugis')"><img src="rez3.png" alt="Rezension 3"></div>
-            <div class="item" id="res_matz" onclick="selectReview('res_matz')"><img src="rez4.png" alt="Rezension 4"></div>
-            <div class="item" id="res_espresso" onclick="selectReview('res_espresso')"><img src="rez5.png" alt="Rezension 5"></div>
-            <div class="item" id="res_mitzis" onclick="selectReview('res_mitzis')"><img src="rez6.png" alt="Rezension 6"></div>
-            <div class="item" id="res_mendo" onclick="selectReview('res_mendo')"><img src="rez7.png" alt="Rezension 7"></div>
+            <div class="item" id="res_tutti" onclick="selectReview('res_tutti')"><img src="rez1.png" alt="Rezension"></div>
+            <div class="item" id="res_susi" onclick="selectReview('res_susi')"><img src="SusiUndStrolch.png" alt="Rezension"></div>
+            <div class="item" id="res_gugis" onclick="selectReview('res_gugis')"><img src="rez3.png" alt="Rezension"></div>
+            <div class="item" id="res_matz" onclick="selectReview('res_matz')"><img src="rez4.png" alt="Rezension"></div>
+            <div class="item" id="res_espresso" onclick="selectReview('res_espresso')"><img src="rez5.png" alt="Rezension"></div>
+            <div class="item" id="res_mitzis" onclick="selectReview('res_mitzis')"><img src="rez6.png" alt="Rezension"></div>
+            <div class="item" id="res_mendo" onclick="selectReview('res_mendo')"><img src="rez7.png" alt="Rezension"></div>
         </div>
 
         <span class="section-title">Die Lokale</span>
-        <div id="locations-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div id="locations-list">
             <div class="target-box" id="goal_tutti" onclick="matchLocation('tutti')"><p>Cafe Tutti Frutti</p></div>
             <div class="target-box" id="goal_susi" onclick="matchLocation('susi')"><p>Susi und Strolch</p></div>
             <div class="target-box" id="goal_gugis" onclick="matchLocation('gugis')"><p>Gugis Beisl</p></div>
@@ -105,10 +197,12 @@
         </div>
     </div>
 
+    <footer>Erstellt für die legendäre Beisltour 2026</footer>
+
     <script>
         let selectedReviewId = null;
 
-        // Rezensionen beim Laden mischen
+        // Rezensionen beim Laden mischen (Shuffle)
         window.addEventListener('DOMContentLoaded', () => {
             const pool = document.getElementById('reviews-pool');
             for (let i = pool.children.length; i >= 0; i--) {
@@ -117,32 +211,50 @@
         });
 
         function selectReview(id) {
+            // Falls schon eins gewählt war, Markierung entfernen
             if (selectedReviewId) {
-                document.getElementById(selectedReviewId).classList.remove('selected');
+                const old = document.getElementById(selectedReviewId);
+                if(old) old.classList.remove('selected');
             }
+            // Neues wählen
             selectedReviewId = id;
             document.getElementById(id).classList.add('selected');
         }
 
         function matchLocation(locId) {
-            if (!selectedReviewId) return;
+            if (!selectedReviewId) {
+                alert("Wähle zuerst oben eine Rezension aus!");
+                return;
+            }
+            
             const reviewKey = selectedReviewId.replace('res_', '');
             
             if (reviewKey === locId) {
-                document.getElementById(selectedReviewId).classList.add('hidden');
-                const target = document.getElementById('goal_' + locId);
-                target.classList.add('solved');
-                target.innerHTML = "<p>✅ " + target.innerText + "</p>";
+                // Richtig!
+                const reviewEl = document.getElementById(selectedReviewId);
+                reviewEl.classList.add('hidden');
+                
+                const targetEl = document.getElementById('goal_' + locId);
+                targetEl.classList.add('solved');
+                targetEl.innerHTML = "<p>✅ " + targetEl.innerText.replace('✅ ', '') + "</p>";
+                
                 selectedReviewId = null;
                 checkWin();
             } else {
-                alert("Falsches Beisl! Probier's nochmal.");
+                // Falsch
+                alert("Oje! Das passt nicht zusammen. Probier ein anderes Lokal.");
+                // Auswahl zur Sicherheit aufheben
+                document.getElementById(selectedReviewId).classList.remove('selected');
+                selectedReviewId = null;
             }
         }
 
         function checkWin() {
-            if (document.querySelectorAll('.item.hidden').length === 7) {
-                alert("Wahnsinn! Du bist ein echter Beisl-Experte. Prost!");
+            const solved = document.querySelectorAll('.target-box.solved').length;
+            if (solved === 7) {
+                setTimeout(() => {
+                    alert("PROST! 🍻\nDu hast alle Rezensionen richtig zugeordnet!\nJetzt seid ihr bereit für die Tour.");
+                }, 500);
             }
         }
     </script>
